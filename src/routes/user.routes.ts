@@ -7,7 +7,7 @@ const router = Router();
  * @swagger
  * tags:
  *   name: Users
- *   description: Gerenciamento de usuários
+ *   description: Endpoints para gerenciamento de usuários
  */
 
 /**
@@ -18,7 +18,7 @@ const router = Router();
  *     tags: [Users]
  *     responses:
  *       200:
- *         description: Lista de usuários
+ *         description: Lista de usuários retornada com sucesso
  */
 router.get('/', UserController.findAll);
 
@@ -26,19 +26,102 @@ router.get('/', UserController.findAll);
  * @swagger
  * /users:
  *   post:
- *     summary: Cria um novo usuário com suas relações
+ *     summary: Cria um novo usuário
  *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               skills:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *               interests:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *               fieldsOfWork:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
  *     responses:
  *       201:
- *         description: Usuário criado
+ *         description: Usuário criado com sucesso
  */
 router.post('/', UserController.create);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Atualiza os dados de um usuário existente
+ *     tags: [Users]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do usuário a ser atualizado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               skills:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *               interests:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *               fieldsOfWork:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *     responses:
+ *       200:
+ *         description: Usuário atualizado com sucesso
+ */
+router.put('/:id', UserController.update);
 
 /**
  * @swagger
@@ -47,14 +130,15 @@ router.post('/', UserController.create);
  *     summary: Remove um usuário e seus relacionamentos
  *     tags: [Users]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
  *         schema:
  *           type: string
+ *         description: ID do usuário a ser removido
  *     responses:
  *       204:
- *         description: Usuário removido
+ *         description: Usuário deletado com sucesso
  */
 router.delete('/:id', UserController.delete);
 
