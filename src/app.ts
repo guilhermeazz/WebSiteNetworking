@@ -5,6 +5,8 @@ import swaggerJSDoc from 'swagger-jsdoc';
 
 import userRoutes from './routes/user.routes';
 import projectGroupRoutes from './routes/projectGroup.routes';
+import recommendationRoutes from './routes/recomendationUser.routes';
+import followRoutes from './routes/follow.routes';
 
 const app = express();
 
@@ -30,5 +32,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Rotas principais
 app.use('/users', userRoutes);
 app.use('/groups', projectGroupRoutes);
+app.use('/users', recommendationRoutes);
+app.use('/users', followRoutes);
 
 export default app;
