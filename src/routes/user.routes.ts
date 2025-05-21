@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
+import { MeController } from '../controllers/me.controller';
 
 const router = Router();
 
@@ -23,7 +24,7 @@ const router = Router();
  *       200:
  *         description: Lista de usuários retornada com sucesso
  */
-router.get('/', authMiddleware, UserController.findAll);
+router.get('/', UserController.findAll);
 
 /**
  * @swagger
@@ -144,5 +145,65 @@ router.put('/:id', authMiddleware, UserController.update);
  *         description: Usuário deletado com sucesso
  */
 router.delete('/:id', authMiddleware, UserController.delete);
+
+/**
+ * @swagger
+ * /users/me:
+ *   get:
+ *     summary: Obtém os dados do usuário autenticado
+ *     description: Retorna os dados do perfil do usuário autenticado, incluindo habilidades, interesses e áreas de atuação.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil do usuário retornado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: ID único do usuário
+ *                   example: "123e4567-e89b-12d3-a456-426614174000"
+ *                 name:
+ *                   type: string
+ *                   example: "João Silva"
+ *                 email:
+ *                   type: string
+ *                   example: "joao.silva@example.com"
+ *                 skills:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: "React"
+ *                 interests:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: "Open Source"
+ *                 fieldsOfWork:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: "Frontend"
+ *       401:
+ *         description: Token de autenticação ausente ou inválido
+ *       404:
+ *         description: Usuário não encontrado
+ *       500:
+ *         description: Erro interno ao buscar o perfil do usuário
+ */
+router.get('/me', authMiddleware, MeController.me);
 
 export default router;

@@ -6,10 +6,20 @@ import bcrypt from 'bcrypt';
 export const UserController = {
   create: async (req: Request, res: Response): Promise<void> => {
     const id = uuidv4();
-    const {name, email, password, skills = [], interests = [], fieldsOfWork = [] } = req.body;
+    const { name, email, password, skills = [], interests = [], fieldsOfWork = [] } = req.body;
     const session = driver.session();
 
     try {
+      const existingUser = await session.run(
+        `MATCH (u:User {email: $email}) RETURN u`,
+        { email }
+      );
+
+      if (existingUser.records.length > 0) {
+        res.status(400).json({ message: 'Email já cadastrado.' });
+        return;
+      }
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
       await session.run(
@@ -55,6 +65,8 @@ export const UserController = {
       await session.close();
     }
   },
+
+
 
   update: async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
