@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
+import { swaggerSpec } from './config/swagger';
 
 import userRoutes from './routes/user.routes';
 import projectGroupRoutes from './routes/projectGroup.routes';
 import recommendationRoutes from './routes/recomendationUser.routes';
 import followRoutes from './routes/follow.routes';
+import authRoutes from './routes/auth.routes';
 
 const app = express();
 
@@ -14,19 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Swagger Config
-const swaggerSpec = swaggerJSDoc({
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'ConnectDev API',
-      version: '1.0.0',
-      description: 'API para conectar desenvolvedores e formar grupos com base em habilidades'
-    }
-  },
-  apis: ['src/routes/*.ts'],
-});
-
+//Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rotas principais
@@ -34,5 +23,6 @@ app.use('/users', userRoutes);
 app.use('/groups', projectGroupRoutes);
 app.use('/users', recommendationRoutes);
 app.use('/users', followRoutes);
+app.use('/auth', authRoutes);
 
 export default app;
