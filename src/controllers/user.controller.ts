@@ -1,15 +1,20 @@
 import { Request, Response } from 'express';
 import { driver } from '../config/neo4j';
+import {v4 as uuidv4} from 'uuid';
+import bcrypt from 'bcrypt';
 
 export const UserController = {
   create: async (req: Request, res: Response): Promise<void> => {
-    const { id, name, email, skills = [], interests = [], fieldsOfWork = [] } = req.body;
+    const id = uuidv4();
+    const {name, email, password, skills = [], interests = [], fieldsOfWork = [] } = req.body;
     const session = driver.session();
 
     try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       await session.run(
-        `CREATE (u:User {id: $id, name: $name, email: $email})`,
-        { id, name, email }
+        `CREATE (u:User {id: $id, name: $name, email: $email, password: $password})`,
+        { id, name, email, password: hashedPassword }
       );
 
       for (const skill of skills) {

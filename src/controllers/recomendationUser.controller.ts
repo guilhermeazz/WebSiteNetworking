@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { driver } from '../config/neo4j';
 
 export const RecomendationUserController = {
-      findRelatedUsers: async (req: Request, res: Response): Promise<void> => {
+  findRelatedUsers: async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const session = driver.session();
 
@@ -10,16 +10,16 @@ export const RecomendationUserController = {
       const result = await session.run(`
         MATCH (u1:User {id: $id})
         MATCH (u2:User)
-        WHERE u1 <> u2
+        WHERE u1 <> u2 AND NOT (u1)-[:FOLLOWS]->(u2)
         OPTIONAL MATCH (u1)-[:HAS_SKILL]->(s:Skill)<-[:HAS_SKILL]-(u2)
         OPTIONAL MATCH (u1)-[:INTERESTED_IN]->(i:Interest)<-[:INTERESTED_IN]-(u2)
         OPTIONAL MATCH (u1)-[:WORKS_IN]->(f:FieldOfWork)<-[:WORKS_IN]-(u2)
         OPTIONAL MATCH (u1)-[:FOLLOWS]->()-[:FOLLOWS]->(u2) // amigos de amigos
         WITH u2,
-             count(DISTINCT s) AS skillScore,
-             count(DISTINCT i) AS interestScore,
-             count(DISTINCT f) AS fieldScore,
-             count(DISTINCT u1) AS fofScore
+            count(DISTINCT s) AS skillScore,
+            count(DISTINCT i) AS interestScore,
+            count(DISTINCT f) AS fieldScore,
+            count(DISTINCT u1) AS fofScore
         WITH u2, (skillScore + interestScore + fieldScore + fofScore) AS score
         WHERE score > 0
         RETURN u2, score
@@ -39,6 +39,7 @@ export const RecomendationUserController = {
       await session.close();
     }
   },
+
 
   findByTechnologies: async (req: Request, res: Response): Promise<void> => {
     const { techs } = req.body; // techs: string[]
