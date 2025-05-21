@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { FollowController } from '../controllers/follow.controller';
+import { authMiddleware } from '../middlewares/auth.middleware'; // ✅ Importar middleware
 
 const router = Router();
 
@@ -15,6 +16,8 @@ const router = Router();
  * /users/{id}/follow:
  *   post:
  *     summary: Seguir um usuário
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Follow]
  *     parameters:
  *       - name: id
@@ -39,13 +42,15 @@ const router = Router();
  *       500:
  *         description: Erro ao seguir o usuário
  */
-router.post('/:id/follow', FollowController.follow);
+router.post('/:id/follow', authMiddleware, FollowController.follow);
 
 /**
  * @swagger
  * /users/{id}/follow:
  *   delete:
  *     summary: Deixar de seguir um usuário
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Follow]
  *     parameters:
  *       - name: id
@@ -70,13 +75,15 @@ router.post('/:id/follow', FollowController.follow);
  *       500:
  *         description: Erro ao deixar de seguir o usuário
  */
-router.delete('/:id/follow', FollowController.unfollow);
+router.delete('/:id/follow', authMiddleware, FollowController.unfollow);
 
 /**
  * @swagger
  * /users/{id}/followers:
  *   get:
  *     summary: Lista os seguidores de um usuário
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Follow]
  *     parameters:
  *       - name: id
@@ -102,6 +109,6 @@ router.delete('/:id/follow', FollowController.unfollow);
  *                   email:
  *                     type: string
  */
-router.get('/:id/followers', FollowController.getFollowers);
+router.get('/:id/followers', authMiddleware, FollowController.getFollowers);
 
 export default router;

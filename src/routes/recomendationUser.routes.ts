@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { RecomendationUserController } from '../controllers/recomendationUser.controller';
+import { authMiddleware } from '../middlewares/auth.middleware'; 
 
 const router = Router();
 
@@ -15,6 +16,8 @@ const router = Router();
  * /users/{id}/recommendations:
  *   get:
  *     summary: Lista usuários recomendados com base em similaridade e amigos de amigos
+ *     security:
+ *       - bearerAuth: []
  *     tags: [UserRecommendations]
  *     parameters:
  *       - in: path
@@ -40,13 +43,15 @@ const router = Router();
  *                   score:
  *                     type: integer
  */
-router.get('/:id/recommendations', RecomendationUserController.findRelatedUsers);
+router.get('/:id/recommendations', authMiddleware, RecomendationUserController.findRelatedUsers);
 
 /**
  * @swagger
  * /users/search-by-techs:
  *   post:
  *     summary: Busca usuários por tecnologias com ordenação por afinidade
+ *     security:
+ *       - bearerAuth: []
  *     description: Retorna uma lista de usuários que possuem uma ou mais das tecnologias especificadas. O resultado é ordenado com base na quantidade de tecnologias coincidentes.
  *     tags: [UserRecommendations]
  *     requestBody:
@@ -101,7 +106,6 @@ router.get('/:id/recommendations', RecomendationUserController.findRelatedUsers)
  *                           type: string
  *                           example: "Desenvolvimento Full Stack"
  */
-router.post('/search-by-techs', RecomendationUserController.findByTechnologies);
-
+router.post('/search-by-techs', authMiddleware, RecomendationUserController.findByTechnologies);
 
 export default router;

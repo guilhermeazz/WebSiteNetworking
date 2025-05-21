@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ProjectGroupController } from '../controllers/projectGroup.controller';
+import { authMiddleware } from '../middlewares/auth.middleware'; 
 
 const router = Router();
 
@@ -15,6 +16,8 @@ const router = Router();
  * /groups:
  *   post:
  *     summary: Cria um novo grupo de projeto com habilidades requeridas
+ *     security:
+ *       - bearerAuth: []
  *     tags: [ProjectGroups]
  *     requestBody:
  *       required: true
@@ -23,8 +26,6 @@ const router = Router();
  *           schema:
  *             type: object
  *             properties:
- *               id:
- *                 type: string
  *               name:
  *                 type: string
  *               description:
@@ -40,13 +41,15 @@ const router = Router();
  *       201:
  *         description: Grupo criado com sucesso
  */
-router.post('/', ProjectGroupController.create);
+router.post('/', authMiddleware, ProjectGroupController.create);
 
 /**
  * @swagger
  * /groups/{id}:
  *   put:
  *     summary: Atualiza um grupo de projeto existente
+ *     security:
+ *       - bearerAuth: []
  *     tags: [ProjectGroups]
  *     parameters:
  *       - in: path
@@ -77,13 +80,15 @@ router.post('/', ProjectGroupController.create);
  *       200:
  *         description: Grupo atualizado com sucesso
  */
-router.put('/:id', ProjectGroupController.update);
+router.put('/:id', authMiddleware, ProjectGroupController.update);
 
 /**
  * @swagger
  * /groups/{id}/recommend:
  *   get:
  *     summary: Recomenda usuários com base nas habilidades necessárias do grupo
+ *     security:
+ *       - bearerAuth: []
  *     tags: [ProjectGroups]
  *     parameters:
  *       - name: id
@@ -121,13 +126,15 @@ router.put('/:id', ProjectGroupController.update);
  *                         name:
  *                           type: string
  */
-router.get('/:id/recommend', ProjectGroupController.recommendMembers);
+router.get('/:id/recommend', authMiddleware, ProjectGroupController.recommendMembers);
 
 /**
  * @swagger
  * /groups/{id}:
  *   delete:
  *     summary: Deleta um grupo e todos os seus relacionamentos
+ *     security:
+ *       - bearerAuth: []
  *     tags: [ProjectGroups]
  *     parameters:
  *       - name: id
@@ -140,6 +147,6 @@ router.get('/:id/recommend', ProjectGroupController.recommendMembers);
  *       204:
  *         description: Grupo deletado com sucesso
  */
-router.delete('/:id', ProjectGroupController.delete);
+router.delete('/:id', authMiddleware, ProjectGroupController.delete);
 
 export default router;

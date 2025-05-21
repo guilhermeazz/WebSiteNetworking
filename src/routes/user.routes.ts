@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 
@@ -15,12 +16,14 @@ const router = Router();
  * /users:
  *   get:
  *     summary: Lista todos os usuários
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Users]
  *     responses:
  *       200:
  *         description: Lista de usuários retornada com sucesso
  */
-router.get('/', UserController.findAll);
+router.get('/', authMiddleware, UserController.findAll);
 
 /**
  * @swagger
@@ -35,13 +38,9 @@ router.get('/', UserController.findAll);
  *           schema:
  *             type: object
  *             properties:
- *               id:
- *                 type: string
  *               name:
  *                 type: string
  *               email:
- *                 type: string
- *               password:
  *                 type: string
  *               skills:
  *                 type: array
@@ -68,13 +67,15 @@ router.get('/', UserController.findAll);
  *       201:
  *         description: Usuário criado com sucesso
  */
-router.post('/', UserController.create);
+router.post('/', UserController.create); // criação pode ser pública, mantive sem authMiddleware
 
 /**
  * @swagger
  * /users/{id}:
  *   put:
  *     summary: Atualiza os dados de um usuário existente
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Users]
  *     parameters:
  *       - name: id
@@ -121,13 +122,15 @@ router.post('/', UserController.create);
  *       200:
  *         description: Usuário atualizado com sucesso
  */
-router.put('/:id', UserController.update);
+router.put('/:id', authMiddleware, UserController.update);
 
 /**
  * @swagger
  * /users/{id}:
  *   delete:
  *     summary: Remove um usuário e seus relacionamentos
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Users]
  *     parameters:
  *       - name: id
@@ -140,6 +143,6 @@ router.put('/:id', UserController.update);
  *       204:
  *         description: Usuário deletado com sucesso
  */
-router.delete('/:id', UserController.delete);
+router.delete('/:id', authMiddleware, UserController.delete);
 
 export default router;
